@@ -2,6 +2,9 @@ package domain
 
 import (
 	"fmt"
+	"net/http"
+
+	"github.com/linuxandchill/mvc/utils"
 )
 
 var (
@@ -11,11 +14,14 @@ var (
 )
 
 // GetUser from fake database
-func GetUser(userID int64) (*User, error) {
+func GetUser(userID int64) (*User, *utils.ApplicationError) {
 	if user := users[userID]; user != nil {
 		return user, nil
 	}
 
-	return nil, fmt.Errorf("User %v not found", userID)
-
+	return nil, &utils.ApplicationError{
+		Message:    fmt.Sprintf("User %v not found", userID),
+		StatusCode: http.StatusNotFound,
+		Code:       "not_found",
+	}
 }

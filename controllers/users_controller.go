@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/linuxandchill/mvc/services"
+	"github.com/linuxandchill/mvc/utils"
 )
 
 // GetUser handles reqs to /user
@@ -14,20 +15,26 @@ import (
 // if all data is there, call services that returns same repsonse from domain
 func GetUser(resp http.ResponseWriter, req *http.Request) {
 
-	userID, err := strconv.ParseInt(req.URL.Query().Get("user_id"), 10, 64)
-
+	userID, err := strconv.ParseInt(req.URL.Query().Get("user_id"), 0, 64)
 	if err != nil {
-		resp.WriteHeader(http.StatusNotFound)
-		resp.Write([]byte("user_id must be a number"))
+		apiErr := &utils.ApplicationError{
+			Message:    "userID must be a number",
+			StatusCode: http.StatusBadRequest,
+			Code:       "bad_request",
+		}
+		jsonValue, _ := json.Marshal(apiErr)
+
+		resp.WriteHeader(apiErr.StatusCode)
+		resp.Write(jsonValue)
 		// return the bad request to the client
 		return
 	}
 
-	user, err := services.GetUser(userID)
-
-	if err != nil {
-		resp.WriteHeader(http.StatusNotFound)
-		resp.Write([]byte(err.Error()))
+	user, apiErr := services.GetUser(userID)
+	if apiErr != nil {
+		jsonValue, _ := json.Marshal(apiErr)
+		resp.WriteHeader(apiErr.StatusCode)
+		resp.Write([]byte(jsonValue))
 		// Handle the error and return
 		return
 	}
