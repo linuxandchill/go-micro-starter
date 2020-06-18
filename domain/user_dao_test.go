@@ -17,12 +17,11 @@ func TestGetUserNoUserFound(t *testing.T) {
 	assert.EqualValues(t, "not_found", err.Code)
 	assert.EqualValues(t, "User 0 not found", err.Message)
 
-	// Shouldnt have a user with id 0
+	// tests no assert lib, redundant
 	if user != nil {
 		t.Error("Id 0 not expected")
 	}
 
-	// Expect 0 to throw an error, its bad if it doesnt
 	if err == nil {
 		t.Error("Expected error when user id is 0")
 	}
@@ -39,7 +38,7 @@ func TestGetUserNoError(t *testing.T) {
 	assert.NotNil(t, user)
 
 	assert.EqualValues(t, 123, user.ID)
-	assert.EqualValues(t, "Tyler", user.FirstName)
-	assert.EqualValues(t, "Munyon", user.LastName)
+	assert.EqualValues(t, "John", user.FirstName)
+	assert.EqualValues(t, "Smith", user.LastName)
 	assert.EqualValues(t, "hellO@gmail.com", user.Email)
 }
